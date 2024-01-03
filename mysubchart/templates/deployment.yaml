@@ -49,7 +49,9 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: http
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
