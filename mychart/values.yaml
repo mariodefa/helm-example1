@@ -9,19 +9,29 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 env:
-  URL_DEPENDENCY: http://mysubchart/json
-  DRINK1: hot chocolate
-  DESSERT1: apple pie
-  DRINK2: beer
-  DESSERT2: banana
+  - name: URL_DEPENDENCY
+    value: http://mysubchart:3000/json
+  - name: DRINK1
+    value: hot chocolate
+  - name: DESSERT1
+    value: apple pie
+  - name: DRINK2
+    value: beer
+  - name: DESSERT2
+    value: banana
 
 mysubchart:
   env:
-    URL_DEPENDENCY:
-    DRINK1: vodka
-    DESSERT1: yogurt
-    DRINK2: whisky
-    DESSERT2: mousse
+    - name: URL_DEPENDENCY
+      value: 
+    - name: DRINK1
+      value: vodka
+    - name: DESSERT1
+      value: yogurt
+    - name: DRINK2
+      value: whisky
+    - name: DESSERT2
+      value: mousse
   fullnameOverride: "mysubchart"
   service:
     port: 3000
