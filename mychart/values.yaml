@@ -10,7 +10,7 @@ image:
   pullPolicy: IfNotPresent
 env:
   - name: URL_DEPENDENCY
-    value: http://mysubchart:3000/json
+    value: http://mysubchartsv:3000/json
   - name: DRINK1
     value: hot chocolate
   - name: DESSERT1
@@ -36,7 +36,7 @@ mysubchart:
   service:
     type: ClusterIP
     port: 3000
-    name: mysubchart
+    name: mysubchartsv
 
 imagePullSecrets: []
 nameOverride: ""
@@ -70,15 +70,14 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 3000
-  name: mychart
+  name: mychartsv
 
 ingress:
   enabled: true
   className: "nginx"
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.org/rewrites: "serviceName=mychart rewrite=/"
-    #;serviceName=mysubchart rewrite=/
+    nginx.org/rewrites: "serviceName=mychartsv rewrite=/;serviceName=mysubchartsv rewrite=/"
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: localhost
@@ -87,14 +86,14 @@ ingress:
           pathType: ImplementationSpecific
           backend:
             service:
-              name: mychart
+              name: mychartsv
               port:
                 number: 3000
         - path: /mysubchart
           pathType: ImplementationSpecific
           backend:
             service:
-              name: mysubchart
+              name: mysubchartsv
               port:
                 number: 3000
   tls: []

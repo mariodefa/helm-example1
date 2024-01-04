@@ -1,14 +1,20 @@
 # Helm Subcharts Steps
+
+
 ## Build Dockerfile
 The Docker image must be built before starting
 ```bash
 docker build -t dependent .
 ```
+
+
 ## Create default templates
 ```bash
 helm create mysubchart
 helm create mychart
 ```
+
+
 ## Modify templates
 ### Modify values.yml of mysubchart
     - Set the Docker image called dependent
@@ -21,7 +27,7 @@ helm create mychart
     - Set the port of the mychart service and the mysubchart service in the mychart Chart
     - Set ingress for mychart and mysubchart in the mychart Chart  
 
-### Modify templates/deployment.yml of mychart
+### Modify templates/deployment.yml of mychart and mysubchart
     - readinessProbe must have port 3000, and initial delay 5 sec
     - Set env var injection in container  
 #### env var injection
@@ -32,8 +38,34 @@ containers:
             {{- toYaml .Values.env | nindent 12 }}
 ```
 
+### Modify templates/ingress.yml of mychart
+add references to values.yml variables instead of fullname variable, so instead of chart's name. also port number matters
+```YML
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ .backend.service.name }}
+                port:
+                  number: {{ .backend.service.port.number }}
+              {{- else }}
+              serviceName: {{ .backend.service.name }}
+              servicePort: {{ .backend.service.port.number }}
+              {{- end }}
+```
+
+### Modify templates/service.yml of mychart and mysubchart
+add references to values.yml variables instead of chart's name variable
+```YML
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.name }}
+```
+
 ### Add the reference to the dependency repo to mychart, Chart.yml:
     - dependencies.repository: "file://../mysubchart"
+
+
 ## Launch project
 ### Launch ingress proxy
 ```bash
